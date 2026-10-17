@@ -40,7 +40,7 @@
 
   html, body { margin: 0; }
   body {
-    position: relative; width: 340px; height: 560px; overflow: hidden; background: #000; color: var(--text);
+    position: relative; width: 340px; height: 600px; overflow: hidden; background: #000; color: var(--text);
     font: .875rem/1.35 system-ui, sans-serif; letter-spacing: -.005em; font-optical-sizing: auto;
   }
   button { font: inherit; letter-spacing: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; }
@@ -59,26 +59,19 @@
 
   #page { position: absolute; inset: 0; background: var(--bg); overflow: hidden; transform-origin: 50% 0; }
   .nav { position: absolute; inset: 0 0 auto; z-index: 2; padding: .75rem 1rem .625rem; border-bottom: 1px solid var(--border); }
-  /* Scroll edge: a blur that fades out below the bar, shown only once content is under it. */
-  .nav::after {
-    content: ""; position: absolute; inset: 100% 0 auto; height: .75rem; opacity: 0; pointer-events: none;
-    backdrop-filter: blur(calc(var(--blur) / 2)); mask-image: linear-gradient(#000, transparent);
-    transition: opacity var(--spring-t) var(--spring);
-  }
-  .nav.scrolled::after { opacity: 1; }
-  main { position: absolute; inset: 0; overflow-y: auto; padding: 3.75rem 1rem 1.25rem; }
+  main { position: absolute; inset: 0; padding: 3.5rem 1rem .75rem; }
 
   .preview {
-    position: relative; height: 9rem; border-radius: 12px; overflow: hidden; border: 1px solid var(--border);
+    position: relative; height: 6rem; border-radius: 12px; overflow: hidden; border: 1px solid var(--border);
     background: linear-gradient(135deg, #1d3b53, #5b2a86 55%, #c2410c);
   }
   #sample { position: absolute; left: 50%; transform: translateX(-50%); white-space: nowrap; border-radius: .5rem; padding: .15em .6em; }
 
-  .section { margin: 1.125rem 1rem .375rem; color: var(--text2); font-weight: 600; }
+  .section { margin: .75rem 1rem .25rem; color: var(--text2); font-weight: 600; }
   .group { background: var(--card); border-radius: 12px; overflow: hidden; border: 1px solid var(--border); list-style: none; }
   .group > * { position: relative; display: block; }
   .group > * + *::before { content: ""; position: absolute; top: 0; left: 1rem; right: 0; border-top: .5px solid var(--sep); }
-  .row { display: flex; align-items: center; justify-content: space-between; gap: .5rem; width: 100%; min-height: 2.75rem; padding: 0 1rem; box-sizing: border-box; text-align: left; }
+  .row { display: flex; align-items: center; justify-content: space-between; gap: .5rem; width: 100%; min-height: 2.5rem; padding: 0 1rem; box-sizing: border-box; text-align: left; }
   .row > span { display: flex; align-items: center; gap: .375rem; }
   .value, .chev { color: var(--text2); }
   .value { margin-left: auto; }
@@ -102,7 +95,7 @@
   .switch:checked::before { transform: translateX(.9375rem); }
 
 
-  .reset { display: block; width: 100%; min-height: 2.75rem; margin-top: 1.25rem; border-radius: 12px; background: var(--card); color: var(--red); font-weight: 500; border: 1px solid var(--border); }
+  .reset { display: block; width: 100%; min-height: 2.5rem; margin-top: .75rem; border-radius: 12px; background: var(--card); color: var(--red); font-weight: 500; border: 1px solid var(--border); }
   .link { color: var(--accent); text-decoration: none; display: inline-block; font-weight: 600; }
 
   /* Press feedback lands on pointer-down; the release springs back. */
@@ -129,7 +122,6 @@
 
   @media (prefers-contrast: more) {
     .press:active { outline: 2px solid var(--text); outline-offset: -2px; }
-    .nav::after { display: none; }
   }
   @media (prefers-reduced-motion: reduce) {
     /* Swap scale and slides for a cross-fade on the same spring. */

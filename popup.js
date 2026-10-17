@@ -68,7 +68,6 @@ chrome.storage.local.get('options', ({ options }) => {
 });
 
 $('reset').addEventListener('click', () => { o = { ...DEFAULTS }; save(); fill(); });
-$('main').addEventListener('scroll', e => $('nav').classList.toggle('scrolled', e.target.scrollTop > 0), { passive: true });
 
 // Spring in Apple's terms, mass 1: stiffness = (2π / response)², damping coefficient = 4π · dampingRatio / response.
 // Re-targeting keeps the current value and velocity, so every animation can be grabbed or reversed mid-flight.
