@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto&family=Inter&family=Open%20Sans&family=Lato&family=Montserrat&family=Poppins&family=Noto%20Sans&family=Source%20Sans%203&family=Merriweather&family=Atkinson%20Hyperlegible&display=swap">
+<style>
+  :root {
+    color-scheme: light dark;
+    --bg: light-dark(#f2f2f7, #000);
+    --card: light-dark(#fff, #1c1c1e);
+    --fill: light-dark(rgba(120, 120, 128, .16), rgba(120, 120, 128, .32));
+    --press: light-dark(rgba(0, 0, 0, .06), rgba(255, 255, 255, .1));
+    --text: light-dark(#000, #fff);
+    --text2: light-dark(rgba(60, 60, 67, .6), rgba(235, 235, 245, .6));
+    --sep: light-dark(rgba(60, 60, 67, .29), rgba(84, 84, 88, .6));
+    --accent: light-dark(#007aff, #0a84ff);
+    --red: light-dark(#ff3b30, #ff453a);
+    --material: light-dark(rgb(249 249 249), rgb(30 30 30));
+    --hi: light-dark(rgba(255, 255, 255, .7), rgba(255, 255, 255, .1)); /* light catching the top edge */
+    --border: transparent;
+    --scrim: rgba(0, 0, 0, .4);
+    --glass-pct: 60%;
+    --blur: 20px;
+    /* Critically damped spring (damping 1.0, response 0.3s) sampled into linear(); it settles in ~0.35s. */
+    --spring: linear(0, 0.28 14%, 0.62 29%, 0.82 43%, 0.92 57%, 0.97 71%, 0.99 86%, 1);
+    --spring-t: .35s;
+  }
+  @media (prefers-reduced-transparency: reduce) {
+    :root { --glass-pct: 100%; --blur: 0px; }
+  }
+  @media (prefers-contrast: more) {
+    :root {
+      --glass-pct: 100%; --blur: 0px;
+      --border: var(--text); --hi: var(--text); --sep: var(--text2);
+      --text2: light-dark(rgba(60, 60, 67, .9), rgba(235, 235, 245, .9));
+      --fill: light-dark(rgba(120, 120, 128, .32), rgba(120, 120, 128, .55));
+      --accent: light-dark(#0040dd, #409cff);
+      --scrim: rgba(0, 0, 0, .6);
+    }
+  }
+
+  html, body { margin: 0; }
+  body {
+    position: relative; width: 340px; height: 560px; overflow: hidden; background: #000; color: var(--text);
+    font: .875rem/1.35 system-ui, sans-serif; letter-spacing: -.005em; font-optical-sizing: auto;
+  }
+  button { font: inherit; letter-spacing: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; }
+  h1, h2, p, ul { margin: 0; padding: 0; }
+
+  /* Type scale: tracking tightens and leading closes as size grows. */
+  .t-title { font-size: 1.375rem; line-height: 1.15; letter-spacing: -.022em; font-weight: 700; }
+  .t-headline { font-size: 1.0625rem; line-height: 1.25; letter-spacing: -.012em; font-weight: 600; }
+  .t-footnote { font-size: .75rem; line-height: 1.3; letter-spacing: 0; }
+  .t-caption { font-size: .6875rem; line-height: 1.25; letter-spacing: .01em; }
+
+  .glass {
+    background: color-mix(in srgb, var(--material) var(--glass-pct), transparent);
+    backdrop-filter: blur(var(--blur)) saturate(180%);
+  }
+
+  #page { position: absolute; inset: 0; background: var(--bg); overflow: hidden; transform-origin: 50% 0; }
+  .nav { position: absolute; inset: 0 0 auto; z-index: 2; padding: .75rem 1rem .625rem; border-bottom: 1px solid var(--border); }
+  /* Scroll edge: a blur that fades out below the bar, shown only once content is under it. */
+  .nav::after {
+    content: ""; position: absolute; inset: 100% 0 auto; height: .75rem; opacity: 0; pointer-events: none;
+    backdrop-filter: blur(calc(var(--blur) / 2)); mask-image: linear-gradient(#000, transparent);
+    transition: opacity var(--spring-t) var(--spring);
+  }
+  .nav.scrolled::after { opacity: 1; }
+  main { position: absolute; inset: 0; overflow-y: auto; padding: 3.75rem 1rem 1.25rem; }
+
+  .preview {
+    position: relative; height: 9rem; border-radius: 12px; overflow: hidden; border: 1px solid var(--border);
+    background: linear-gradient(135deg, #1d3b53, #5b2a86 55%, #c2410c);
+  }
+  #sample { position: absolute; left: 50%; transform: translateX(-50%); white-space: nowrap; border-radius: .5rem; padding: .15em .6em; }
+
+  .section { margin: 1.125rem 1rem .375rem; color: var(--text2); font-weight: 600; }
+  .group { background: var(--card); border-radius: 12px; overflow: hidden; border: 1px solid var(--border); list-style: none; }
+  .group > * { position: relative; display: block; }
+  .group > * + *::before { content: ""; position: absolute; top: 0; left: 1rem; right: 0; border-top: .5px solid var(--sep); }
+  .row { display: flex; align-items: center; justify-content: space-between; gap: .5rem; width: 100%; min-height: 2.75rem; padding: 0 1rem; box-sizing: border-box; text-align: left; }
+  .row > span { display: flex; align-items: center; gap: .375rem; }
+  .value, .chev { color: var(--text2); }
+  .value { margin-left: auto; }
+  .chev { font-size: 1.2em; line-height: 1; }
+  output { font-variant-numeric: tabular-nums; min-width: 3.5ch; text-align: right; color: var(--text2); }
+  input[type=range] { width: 6.25rem; accent-color: var(--accent); margin: 0; }
+  input[type=color] { appearance: none; width: 1.3125rem; height: 1.3125rem; padding: 0; border: 0; border-radius: 50%; background: none; cursor: pointer; }
+  input[type=color]::-webkit-color-swatch-wrapper { padding: 0; }
+  input[type=color]::-webkit-color-swatch { border: 1px solid var(--sep); border-radius: 50%; } /* the ring keeps white visible on a white card */
+
+  .switch {
+    appearance: none; position: relative; flex: none; width: 2.375rem; height: 1.4375rem; margin: 0; border-radius: 1rem;
+    background: var(--fill); border: 1px solid var(--border); cursor: pointer;
+    transition: background-color var(--spring-t) var(--spring);
+  }
+  .switch::before {
+    content: ""; position: absolute; top: 2px; left: 2px; width: calc(1.4375rem - 6px); aspect-ratio: 1; border-radius: 50%;
+    background: #fff; box-shadow: 0 2px 4px rgba(0, 0, 0, .2); transition: transform var(--spring-t) var(--spring);
+  }
+  .switch:checked { background: light-dark(#34c759, #30d158); }
+  .switch:checked::before { transform: translateX(.9375rem); }
+
+
+  .reset { display: block; width: 100%; min-height: 2.75rem; margin-top: 1.25rem; border-radius: 12px; background: var(--card); color: var(--red); font-weight: 500; border: 1px solid var(--border); }
+  .link { color: var(--accent); text-decoration: none; display: inline-block; font-weight: 600; }
+
+  /* Press feedback lands on pointer-down; the release springs back. */
+  .press { touch-action: manipulation; -webkit-tap-highlight-color: transparent; transition: transform var(--spring-t) var(--spring), background-color var(--spring-t) var(--spring); }
+  .press:active { transform: scale(.97); }
+  .row.press:active, .reset:active { background-color: var(--press); }
+
+  #scrim { position: absolute; inset: 0; z-index: 3; background: var(--scrim); opacity: 0; visibility: hidden; }
+  .sheet {
+    position: absolute; left: 0; right: 0; bottom: -3rem; z-index: 4; height: calc(80% + 3rem); box-sizing: border-box;
+    display: flex; flex-direction: column; gap: .75rem; padding: .375rem 1rem 3.75rem; /* 3rem tucked below the edge hides the rubber-band gap */
+    border-radius: 14px 14px 0 0; border-top: 1px solid var(--hi); box-shadow: 0 -8px 40px rgba(0, 0, 0, .3);
+    backdrop-filter: blur(calc(var(--blur) * 1.5)) saturate(180%); /* bigger surface, thicker material */
+    visibility: hidden; touch-action: none; will-change: transform;
+  }
+  .grabber { flex: none; align-self: center; width: 2.25rem; height: .3125rem; border-radius: 3px; background: var(--fill); }
+  .sheet header { display: flex; align-items: center; justify-content: space-between; }
+  #font { font: inherit; color: var(--text); padding: .55rem .75rem; border-radius: 10px; border: 1px solid var(--sep); background: var(--card); outline: none; }
+  #font:focus-visible { border-color: var(--accent); }
+  #font:invalid { border-color: var(--red); }
+  .error { color: var(--red); margin-top: -.5rem; }
+  .list { flex: 1; overflow-y: auto; touch-action: pan-y; }
+  .list [aria-pressed=true]::after { content: "✓"; color: var(--accent); font-weight: 600; }
+
+  @media (prefers-contrast: more) {
+    .press:active { outline: 2px solid var(--text); outline-offset: -2px; }
+    .nav::after { display: none; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    /* Swap scale and slides for a cross-fade on the same spring. */
+    .press { transition: opacity var(--spring-t) var(--spring), background-color var(--spring-t) var(--spring); }
+    .press:active { transform: none; opacity: .6; }
+    .switch::before { transition: none; }
+  }
+</style>
+
+<div id="page">
+  <header class="nav glass" id="nav"><h1 class="t-title">Subtitles</h1></header>
+  <main id="main">
+    <section class="preview" aria-label="Preview"><span id="sample">Subtitles will look like this.</span></section>
+
+    <h2 class="section t-footnote">Text</h2>
+    <div class="group">
+      <button class="row press" id="fontRow" aria-haspopup="dialog">Font <span class="value" id="fontValue"></span><span class="chev" aria-hidden="true">›</span></button>
+      <label class="row">Size <span><output for="size"></output><input type="range" id="size" min="12" max="60"></span></label>
+      <label class="row">Color <input type="color" id="color"></label>
+      <label class="row">Outline <input type="checkbox" class="switch" id="outline"></label>
+    </div>
+
+    <h2 class="section t-footnote">Placement</h2>
+    <div class="group">
+      <label class="row">Background opacity <span><output for="bg"></output><input type="range" id="bg" min="0" max="1" step="0.05"></span></label>
+      <label class="row">Distance from bottom <span><output for="bottom"></output><input type="range" id="bottom" min="0" max="60"></span></label>
+    </div>
+
+    <h2 class="section t-footnote">Player</h2>
+    <div class="group">
+      <label class="row">Hide watermark <input type="checkbox" class="switch" id="noWatermark"></label>
+    </div>
+
+    <button class="reset press" id="reset">Reset subtitle style</button>
+  </main>
+</div>
+
+<div id="scrim"></div>
+<section class="sheet glass" id="sheet" role="dialog" aria-modal="true" aria-labelledby="sheetTitle">
+  <div class="grabber"></div>
+  <header><h2 class="t-headline" id="sheetTitle">Font</h2><button class="link press" id="done">Done</button></header>
+  <input type="text" id="font" placeholder="Any Google Fonts family" spellcheck="false" aria-describedby="fontError">
+  <p class="error t-caption" id="fontError" hidden>Google Fonts has no family with that name.</p>
+  <ul class="group list" id="fontList"></ul>
+  <a class="link press t-footnote" href="https://fonts.google.com" target="_blank">Browse Google Fonts ↗</a>
+</section>
+<script src="popup.js"></script>
