@@ -10,7 +10,8 @@ font.rel = 'stylesheet';
 
 function apply(o) {
   o = { ...DEFAULTS, ...o };
-  font.href = `https://fonts.googleapis.com/css2?family=${encodeURIComponent(o.font)}:wght@400;700&display=swap`;
+  const href = `https://fonts.googleapis.com/css2?family=${encodeURIComponent(o.font)}:wght@400;700&display=swap`;
+  if (font.href !== href) font.href = href; // apply() runs on every slider tick
   style.textContent = `
     ${SPAN} { font-family: "${o.font}", system-ui, sans-serif !important; color: ${o.color} !important;
       background-color: rgba(0,0,0,${o.bg}) !important; border-radius: 1rem; padding: 0.5rem 1.5rem;

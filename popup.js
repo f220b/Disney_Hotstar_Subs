@@ -1,6 +1,10 @@
 const DEFAULTS = { font: 'Roboto', size: 28, color: '#ffffff', bg: 0, bottom: 10, outline: true, noWatermark: true };
 const FONTS = ['Roboto', 'Inter', 'Open Sans', 'Lato', 'Montserrat', 'Poppins', 'Noto Sans', 'Source Sans 3', 'Merriweather', 'Atkinson Hyperlegible'];
 const $ = id => document.getElementById(id);
+// Chrome caps popups at 600 device px, so browser zoom above 100% leaves fewer CSS px; shrink to fit instead of scrolling.
+const fit = () => { const z = Math.min(1, innerHeight / 600); document.body.style.zoom = z; document.body.style.width = `${340 / z}px`; };
+fit();
+addEventListener('resize', fit);
 const inputs = [...document.querySelectorAll('input[id]')];
 const font = $('font'), sheet = $('sheet'), scrim = $('scrim'), page = $('page'), list = $('fontList');
 const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)');
@@ -24,7 +28,8 @@ function preview() {
   s.bottom = `${o.bottom}%`;
   s.textShadow = o.outline ? '0 0 2px #000, 0 0 2px #000, 0 0 2px #000' : 'none';
   $('fontValue').textContent = o.font;
-  if (!FONTS.includes(o.font)) customFont.href = `https://fonts.googleapis.com/css2?family=${encodeURIComponent(o.font)}&display=swap`;
+  const href = `https://fonts.googleapis.com/css2?family=${encodeURIComponent(o.font)}&display=swap`;
+  if (customFont.href !== href) customFont.href = href;
   for (const b of list.querySelectorAll('button')) b.setAttribute('aria-pressed', b.textContent === o.font);
 }
 function fill() {
@@ -38,10 +43,14 @@ function setFontValid(ok) {
   $('fontError').hidden = ok;
 }
 
+let fontTimer;
 for (const el of inputs) el.addEventListener('input', async () => {
   show(el);
   const v = read(el);
   if (el === font) {
+    clearTimeout(fontTimer);
+    await new Promise(r => fontTimer = setTimeout(r, 300)); // validate once typing pauses
+    if (font.value !== v) return;
     const ok = await fontExists(v);
     if (font.value !== v) return; // a newer keystroke owns the result
     setFontValid(ok);
@@ -115,7 +124,11 @@ function render() {
 }
 render();
 
+// The preset fonts are only needed by the sheet, so they load on its first open instead of blocking the popup.
+const presets = Object.assign(document.createElement('link'), { rel: 'stylesheet',
+  href: `https://fonts.googleapis.com/css2?${FONTS.map(f => `family=${encodeURIComponent(f)}`).join('&')}&display=swap` });
 function open() {
+  if (!presets.isConnected) document.head.append(presets);
   H = sheet.offsetHeight;
   if (reduceMotion.matches) { pos.set(0); fade.to(1, { damping: 1, response: 0.2 }); }
   else {

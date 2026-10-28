@@ -1,7 +1,6 @@
 <!doctype html>
 <html lang="en">
 <meta charset="utf-8">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto&family=Inter&family=Open%20Sans&family=Lato&family=Montserrat&family=Poppins&family=Noto%20Sans&family=Source%20Sans%203&family=Merriweather&family=Atkinson%20Hyperlegible&display=swap">
 <style>
   :root {
     color-scheme: light dark;
@@ -38,7 +37,8 @@
     }
   }
 
-  html, body { margin: 0; }
+  /* Clipping on html too keeps body's overflow on body, so the parked sheet below it adds no scroll area. */
+  html, body { margin: 0; overflow: clip; }
   body {
     position: relative; width: 340px; height: 600px; overflow: hidden; background: #000; color: var(--text);
     font: .875rem/1.35 system-ui, sans-serif; letter-spacing: -.005em; font-optical-sizing: auto;

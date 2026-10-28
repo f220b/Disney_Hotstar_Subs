@@ -18,6 +18,7 @@
       "js": [
         "content.js"
       ],
+      "run_at": "document_start",
       "matches": [
         "https://*.hotstar.com/*",
         "https://hotstar.com/*",
